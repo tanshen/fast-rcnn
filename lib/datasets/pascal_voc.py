@@ -269,9 +269,115 @@ class pascal_voc(datasets.imdb):
         print('Running:\n{}'.format(cmd))
         status = subprocess.call(cmd, shell=True)
 
+    def _cls_evaldet(self, cls, ids, cls_det, gt_det, gtids_hash):
+	npos = 0
+	cls_gt=[]
+	for i in range(0, len(gt_det['gtids'])):
+	    clsinds = [k for k,this_cls in enumerate(gt_det['recs'][0][i]['objects']['class'][0]) if str(this_cls[0]) == cls]
+	    this_gt = {}
+	    this_gt['BB'] = [gt_det['recs'][0][i]['objects']['bbox'][0][k][0] for k in clsinds]
+	    this_gt['diff'] = [gt_det['recs'][0][i]['objects']['difficult'][0][k][0][0] for k in clsinds]
+	    this_gt['det'] = np.zeros((len(clsinds),1))
+	    cls_gt.append(this_gt)
+	    npos = npos + this_gt['diff'].count(0)
+
+	nd = len(cls_det)
+	tp = np.zeros(nd)
+	fp = np.zeros(nd)
+
+	for d in range(0, nd):
+	    i = gtids_hash[ids[d]]
+	    #TODO: Handle unrecognized ID
+	
+	    bb = [round(t,1)+1 for t in cls_det[d][0:4]]
+	    ovmax = -1
+	    for j in range(0,len(cls_gt[i]['BB'])):
+		bbgt = cls_gt[i]['BB'][j]
+		
+		bi = [max(bb[0],bbgt[0]), max(bb[1],bbgt[1]), min(bb[2],bbgt[2]), min(bb[3],bbgt[3])]
+		iw = bi[2] - bi[0] + 1
+		ih = bi[3] - bi[1] + 1
+		if iw>0 and ih>0:
+		    ua = (bb[2] - bb[0] + 1)*(bb[3] - bb[1]+1)+(bbgt[2]-bbgt[0]+1)*(bbgt[3]-bbgt[1]+1) - iw*ih
+		    ov = iw*ih/ua
+		    if ov>ovmax:
+			ovmax = ov
+			jmax = j
+	
+	    if ovmax>=0.5: #TODO: Parameter to change threshold
+		if not cls_gt[i]['diff'][jmax]:
+			if not cls_gt[i]['det'][jmax]:
+				tp[d]=1
+				cls_gt[i]['det'][jmax]=1
+			else:
+				fp[d]=1
+	    else:
+		fp[d]=1
+
+	fp = np.cumsum(fp)
+	tp = np.cumsum(tp)
+	rec = tp/npos
+	prec = [tp[i]/(tp[i]+fp[i]) for i in range(0,len(fp))]
+	mrec = [0]
+	mrec.extend(rec)
+	mrec.append(1)
+	mpre = [0]
+	mpre.extend(prec)
+	mpre.append(0)
+	for i in range(len(mpre)-2,-1,-1):
+	     mpre[i] = max(mpre[i],mpre[i+1])
+	
+	ap = sum([(mrec[i+1] - mrec[i])*(mpre[i+1]) for i in range(len(mrec)-1) if not mrec[i]==mrec[i+1]])
+	res={}
+	res['prec']=prec
+	res['rec']=rec
+	res['ap']=ap
+
+	return res
+
+    def _do_python_eval(self, all_boxes, output_dir):
+        gt_path = os.path.join(self._devkit_path, 'local', 'VOC' + self._year,
+                            self._image_set+'_anno.mat')
+	gt_det = sio.loadmat(gt_path) #The gtids, recs mat file
+	
+	gtid_hash={}
+	for i,id in enumerate(gt_det['gtids']):
+	    gtid_hash[str(id[0][0])]=i
+
+	for cls_ind, cls in enumerate(self.classes):
+            if cls == '__background__':
+                continue
+            print 'Computing results for {}'.format(cls)
+	    cls_det = all_boxes[cls_ind][:]
+	
+	    ids = []
+	    new_cls_det=[]
+	    for i in range(0,len(cls_det)):
+		for bbox in cls_det[i]:
+		    ids.append(str(self.image_index[i]))
+		    new_cls_det.append(bbox)
+	    scores = np.array([-1*round(b[-1],3) for b in new_cls_det])
+	    si = np.lexsort((ids,scores))
+	    scores = scores[si]
+	    new_cls_det = np.array(new_cls_det)
+	    ids = np.array(ids)
+	    new_cls_det = new_cls_det[si]
+	    ids = ids[si]
+
+	    cls_res = self._cls_evaldet(cls, ids, new_cls_det, gt_det, gtid_hash)
+	    cls_outpath = os.path.join(output_dir,cls+'.pkl')
+	    with open(cls_outpath,'wb') as output:
+		cPickle.dump(cls_res,output,cPickle.HIGHEST_PROTOCOL)
+
+	    print 'AP: {:4f}'.format(cls_res['ap'])
+
     def evaluate_detections(self, all_boxes, output_dir):
-        comp_id = self._write_voc_results_file(all_boxes)
-        self._do_matlab_eval(comp_id, output_dir)
+	#MATLAB EVALUATION
+        #comp_id = self._write_voc_results_file(all_boxes)
+        #self._do_matlab_eval(comp_id, output_dir)
+
+	#PYTHON EVALUATION
+	self._do_python_eval(all_boxes,output_dir)
 
     def competition_mode(self, on):
         if on:
