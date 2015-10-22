@@ -35,8 +35,3 @@ def _which(program):
                 return exe_file
 
     return None
-
-if _which(MATLAB) is None:
-    msg = ("MATLAB command '{}' not found. "
-           "Please add '{}' to your PATH.").format(MATLAB, MATLAB)
-    raise EnvironmentError(msg)
