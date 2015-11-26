@@ -1,6 +1,8 @@
 (Concerning to original README.md, please refer to README_ORIG.md.)
-# Implementation of *Fast* R-CNN on Another Dataset: [Right Whale Recognition](https://www.kaggle.com/c/noaa-right-whale-recognition)
-Before starting to train your Fast-RCNN on another dataset with this tutorial, in order to avoid unknown errors which are unrelated to these steps, please ensure you've followed the original steps to reproduce the result of demo successfully. For trouble-shooting, see bottom of this file.
+# Implementation of *Fast R-CNN* on [Right Whale Recognition Dataset](https://www.kaggle.com/c/noaa-right-whale-recognition) 
+Before starting to train your Fast-RCNN on another dataset with this tutorial, please nore:
+- in order to avoid unknown errors which are unrelated to these steps, ensure you've followed the original steps to reproduce the result of demo successfully. 
+- For trouble-shooting, see the bottom of this file.
 
 ## Preparing Dataset
 Following the steps below, prepare your own dataset. (you may want to compare with similar steps listed at [Train Fast-RCNN on Another Dataset](https://github.com/zeyuanxy/fast-rcnn/tree/master/help/train) and [How to train fast rcnn on imagenet](http://sunshineatnoon.github.io/Train-fast-rcnn-model-on-imagenet-without-matlab/))
@@ -77,13 +79,13 @@ def get_data_from_tag(node,tag):
 ```
 Then, modifying codes to get annotations by this function. For detail, see my [kaggle.py](https://github.com/coldmanck/fast-rcnn/blob/master/lib/datasets/kaggle.py).
 
-Also, in the for loop of process of loading object bounding boxes into a data frame, there're something should be modified. Refer to the issue of selective search, one may find that 
+Also, in the for loop of process of loading object bounding boxes into a data frame, there're something should be modified. Refer to the [issue of selective search](https://github.com/rbgirshick/fast-rcnn/issues/26), one may find that 
 - the format of proposal ROIs produced by matlab code is: [top, left, bottom, right], 1-based index.
 - while the format of proposals in demo mat file is: [left, top, right, bottom], 0-based index.
 
 In our training and testing process, in fact, we follow the first second format **[left, top, right, bottom], 0-based index**. One may see in function `_load_selective_search_roidb`: there's a line `box_list.append(raw_data[i][:, (1, 0, 3, 2)] - 1)` which dealing with this problem.
 
-Also, because the data format of Right Whale dataset which coordinates start from zero, is different from the original format, I need to minus one to fit:
+Also, because the data format of Right Whale dataset which coordinates start from zero is different from the original format, I need to minus one to fit:
 ```
 x1 = float(get_data_from_tag(obj, 'xmin')) - 1
 y1 = float(get_data_from_tag(obj, 'ymin')) - 1
@@ -143,7 +145,7 @@ Following the renaming approach, you have to modify this two layers name in some
 - $FRCNN_ROOT/lib/fast_rcnn/test_train.py
 - $FRCNN_ROOT/lib/fast_rcnn/test.py
 
-## Train your Fast-RCNN
+## Train your Fast-RCNN !
 Finally, you can train your own dataset. At `$FRCNN_ROOT`, 
 - On CaffeNet: run `./tools/train_net.py --gpu 0 --solver models/CaffeNet/solver.prototxt --weights data/imagenet_models/CaffeNet.v2.caffemodel --imdb kaggle_train`
 - On VGG_CNN: run `./tools/train_net.py --gpu 9 --solver models/VGG_CNN_M_1024/solver.prototxt --weights data/imagenet_models/VGG_CNN_M_1024.v2.caffemodel --imdb kaggle_train`
@@ -175,7 +177,7 @@ prototxt = os.path.join(cfg.ROOT_DIR, 'models', NETS[args.demo_net][0],'test_kag
 ```
 You may want to see my [demo_kaggle.py](https://github.com/coldmanck/fast-rcnn/blob/master/tools/demo_kaggle.py) for detail. In addition, I trace all of my training data and save the resulting coordinate [left, top, right, bottom] into mat file. you can refer to my [demo_kaggle_all.py](https://github.com/coldmanck/fast-rcnn/blob/master/tools/demo_kaggle_all.py).
 
-Concerning to your testing data's proposals, you may want to generate from the same `selective_search.m`. It's okay, however be careful of the same problem mentioned above (reversion of coordinates). To revise it into correct format, you can refer to my [trans_selective_search.m](https://github.com/coldmanck/fast-rcnn/blob/master/kaggle/trans_selective_search.m) (convert into mat file for each picture, e.g. w_1234.mat) or [trans_selective_search_allmat.m](https://github.com/coldmanck/fast-rcnn/blob/master/kaggle/trans_selective_search_allmat.m) (convert all into single mat file).
+**Warning:** Concerning to your testing data's proposals, you may want to generate from the same `selective_search.m`. It's okay, however be careful of the same problem mentioned above (reversion of coordinates). To revise the output mat file into correct format, you can refer to my [trans_selective_search.m](https://github.com/coldmanck/fast-rcnn/blob/master/kaggle/trans_selective_search.m) (convert into mat file for each picture, e.g. w_1234.mat) or [trans_selective_search_allmat.m](https://github.com/coldmanck/fast-rcnn/blob/master/kaggle/trans_selective_search_allmat.m) (convert all into single mat file).
 
 ## Trouble-Shooting
 **Error message** `Gdk-CRITICAL **: gdk_cursor_new_for_display: assertion 'GDK_IS_DISPLAY (display)' failed`
