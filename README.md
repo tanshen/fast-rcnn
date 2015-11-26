@@ -37,6 +37,7 @@ kaggle
     </object>
 </annotation>
 ```
+For the conversion between `.mat` file to `.xml` file, see my [convert_mat_to_xml.m](https://github.com/coldmanck/fast-rcnn/blob/master/convert_mat_to_xml/convert_mat_to_xml.m) for details.
 - Images: This folder contains all your training images
 - ImageSets: This folder originally only contains one file--trian.txt, which contains all the names of the images. It looks like this:
 ```
