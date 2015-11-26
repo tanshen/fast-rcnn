@@ -5,7 +5,7 @@ Before starting to train your Fast-RCNN on another dataset with this tutorial, p
 - For trouble-shooting, see the bottom of this file.
 
 ## Preparing Dataset
-You may want to compare with similar steps listed at [Train Fast-RCNN on Another Dataset](https://github.com/zeyuanxy/fast-rcnn/tree/master/help/train) and [How to train fast rcnn on imagenet](http://sunshineatnoon.github.io/Train-fast-rcnn-model-on-imagenet-without-matlab/)). Below is my dataset directory:
+You may want to compare with similar steps listed on [Train Fast-RCNN on Another Dataset](https://github.com/zeyuanxy/fast-rcnn/tree/master/help/train) and [How to train fast rcnn on imagenet](http://sunshineatnoon.github.io/Train-fast-rcnn-model-on-imagenet-without-matlab/). Below is my dataset directory:
 ```
 kaggle
 |-- data
@@ -37,7 +37,7 @@ kaggle
     </object>
 </annotation>
 ```
-For the conversion between `.mat` file to `.xml` file, see my [convert_mat_to_xml.m](https://github.com/coldmanck/fast-rcnn/blob/master/convert_mat_to_xml/convert_mat_to_xml.m) for details.
+If you use MATLAB to label the training image like me, or your dataset is in `.mat` format, for the conversion from `.mat` file to `.xml` file, see my [convert_mat_to_xml.m](https://github.com/coldmanck/fast-rcnn/blob/master/convert_mat_to_xml/convert_mat_to_xml.m) for more details.
 - Images: This folder contains all your training images
 - ImageSets: This folder originally only contains one file--trian.txt, which contains all the names of the images. It looks like this:
 ```
@@ -169,10 +169,10 @@ CLASSES = ('__background__','whale')
 # add some lines below in function vis_detections(im, class_name, dets, image_name, thresh=0.5):
 max_inds = 0
 if len(inds) == 0:
-    print("no target detected!")
+    print('no target detected!')
     return
 elif len(inds) > 1:
-    print("more than 1 target detected!")
+    print(str(len(inds)) + ' targets detected! Choose the highest one.')
     for i in inds:
         if(dets[i, -1] > max_score):
             max_inds = i
