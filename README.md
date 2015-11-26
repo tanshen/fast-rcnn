@@ -83,7 +83,7 @@ Also, in the for loop of process of loading object bounding boxes into a data fr
 - the format of proposal ROIs produced by matlab code is: [top, left, bottom, right], 1-based index.
 - while the format of proposals in demo mat file is: [left, top, right, bottom], 0-based index.
 
-In our training and testing process, in fact, we follow the first second format **[left, top, right, bottom], 0-based index**. One may see in function `_load_selective_search_roidb`: there's a line `box_list.append(raw_data[i][:, (1, 0, 3, 2)] - 1)` which dealing with this problem.
+In our training and testing process, in fact, we follow the first second format **[left, top, right, bottom], 0-based index**. One may see in function `_load_selective_search_roidb`, there's a line `box_list.append(raw_data[i][:, (1, 0, 3, 2)] - 1)` which dealing with this problem.
 
 Also, because the data format of Right Whale dataset which coordinates start from zero is different from the original format, I need to minus one to fit:
 ```
@@ -92,7 +92,7 @@ y1 = float(get_data_from_tag(obj, 'ymin')) - 1
 x2 = float(get_data_from_tag(obj, 'xmax')) - 1
 y2 = float(get_data_from_tag(obj, 'ymax')) - 1
 ```
-Finally, Do not forget to `import` your file: `import datasets.kaggle`
+Finally, do not forget to `import` your file: `import datasets.kaggle`
 
 ### factory.py
 There're some lines you have to modify:
@@ -103,10 +103,10 @@ for split in ['train', 'test']:
     name = '{}_{}'.format('kaggle', split)
     __sets[name] = (lambda split=split: datasets.kaggle(split, kaggle_devkit_path))
 ```
-If you have more than one class you have to deal with, `numbers_of_classes` for-loop you have to create. You can refer to my [factory.py](https://github.com/coldmanck/fast-rcnn/blob/master/lib/datasets/factory.py) (one class) and original `factory_inria.py`(https://github.com/coldmanck/fast-rcnn/blob/master/lib/datasets/factory_inria.py) (two classes) created by zeyuanxy.
+If you have more than 1 class you have to deal with, there're `numbers_of_classes` for-loops you have to create. You can refer to my [factory.py](https://github.com/coldmanck/fast-rcnn/blob/master/lib/datasets/factory.py) (1 class) and original [factory_inria.py](https://github.com/coldmanck/fast-rcnn/blob/master/lib/datasets/factory_inria.py) (2 classes) created by zeyuanxy.
 Also, do not forget to `import` your new file: `import datasets.kaggle`
 
-### ＿＿init＿＿.py
+### ＿init＿.py
 Again, remember to import: `from .kaggle import kaggle`
 
 
@@ -125,7 +125,7 @@ image_db = '/home/coldmanck/kaggle';
 end
 selective_search_rcnn(image_filenames, 'train.mat');
 ```
-Then run this mat to generate proposals of training data, then move the output `train.mat` to the root of your dataset, e.g. `/home/coldmanck/kaggle`. It's time-consuming and highly depends on performance of your machine, wait patiently :-)
+Then run this mat to generate proposals of training data, then move the output `train.mat` to the root of your dataset, e.g. `/home/coldmanck/kaggle` (Note that if you have follow the instruction of original fast-rcnn repository, you should have made an symbolic link under `$FRCNN_ROOT/data`). It's time-consuming and highly depends on performance of your machine, wait patiently :-)
 
 If you don't have MATLAB, [dlib's slective search](http://dlib.net/) is recommended, you can find details in [sunshineatnoon's instruction](http://sunshineatnoon.github.io/Train-fast-rcnn-model-on-imagenet-without-matlab/).
 
@@ -200,7 +200,7 @@ Run `$ export LD_LIBRARY_PATH=/usr/local/cuda/lib64` in every session (every con
 
 **Error message** `Check failed: ShapeEquals(proto) shape mismatch(reshape not set)`
 
-Follow my renaming approach (rename `bbox_pred` and `cls_score`) descripted in this article to re-train your model.
+Follow my renaming approach (rename layers `bbox_pred` and `cls_score`) descripted in this article to re-train your model.
 
 ## Reference
 1. [Train Fast-RCNN on Another Dataset](https://github.com/zeyuanxy/fast-rcnn/tree/master/help/train)
