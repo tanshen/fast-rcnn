@@ -92,7 +92,7 @@ y1 = float(get_data_from_tag(obj, 'ymin')) - 1
 x2 = float(get_data_from_tag(obj, 'xmax')) - 1
 y2 = float(get_data_from_tag(obj, 'ymax')) - 1
 ```
-Finally, Do not forget to `import` your new file: `import datasets.kaggle`
+Finally, Do not forget to `import` your file: `import datasets.kaggle`
 
 ### factory.py
 There're some lines you have to modify:
@@ -106,7 +106,7 @@ for split in ['train', 'test']:
 If you have more than one class you have to deal with, `numbers_of_classes` for-loop you have to create. You can refer to my [factory.py](https://github.com/coldmanck/fast-rcnn/blob/master/lib/datasets/factory.py) (one class) and original `factory_inria.py`(https://github.com/coldmanck/fast-rcnn/blob/master/lib/datasets/factory_inria.py) (two classes) created by zeyuanxy.
 Also, do not forget to `import` your new file: `import datasets.kaggle`
 
-### __init__.py
+### ＿＿init＿＿.py
 Again, remember to import: `from .kaggle import kaggle`
 
 
@@ -183,7 +183,7 @@ prototxt = os.path.join(cfg.ROOT_DIR, 'models', NETS[args.demo_net][0],'test_kag
 ```
 You may want to see my [demo_kaggle.py](https://github.com/coldmanck/fast-rcnn/blob/master/tools/demo_kaggle.py) for detail. In addition, I trace all of my training data and save the resulting coordinate [left, top, right, bottom] into mat file. you can refer to my [demo_kaggle_all.py](https://github.com/coldmanck/fast-rcnn/blob/master/tools/demo_kaggle_all.py).
 
-**Warning:** Concerning to your testing data's proposals, you may want to generate from the same `selective_search.m`. It's okay, however be careful of the same problem mentioned above (reversion of coordinates). To revise the output mat file into correct format, you can refer to my [trans_selective_search.m](https://github.com/coldmanck/fast-rcnn/blob/master/kaggle/trans_selective_search.m) (convert into mat file for each picture, e.g. w_1234.mat) or [trans_selective_search_allmat.m](https://github.com/coldmanck/fast-rcnn/blob/master/kaggle/trans_selective_search_allmat.m) (convert all into single mat file).
+**Warning:** Concerning to your testing data's proposals, you may want to generate from the same `selective_search.m`. It's okay, however be careful of the same problem mentioned above (reversion of coordinates). To revise the output mat file into correct format, you can refer to my [trans_selective_search.m](https://github.com/coldmanck/fast-rcnn/blob/master/data/kaggle/trans_selective_search.m) (convert into mat file for each picture, e.g. w_1234.mat) or [trans_selective_search_allmat.m](https://github.com/coldmanck/fast-rcnn/blob/master/data/kaggle/trans_selective_search_allmat.m) (convert all into single mat file).
 
 ## Trouble-Shooting
 **Error message** `Gdk-CRITICAL **: gdk_cursor_new_for_display: assertion 'GDK_IS_DISPLAY (display)' failed`
