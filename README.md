@@ -3,7 +3,7 @@
 Before starting to train your Fast-RCNN on another dataset with this tutorial, in order to avoid unknown errors which are unrelated to these steps, please ensure you've followed the original steps to reproduce the result of demo successfully.
 
 ## Preparing Dataset
-Following the steps list on [Train Fast-RCNN on Another Dataset](https://github.com/zeyuanxy/fast-rcnn/tree/master/help/train) and [How to train fast rcnn on imagenet](http://sunshineatnoon.github.io/Train-fast-rcnn-model-on-imagenet-without-matlab/), prepare your own dataset.
+Following the steps below, prepare your own dataset. (you may want to compare with similar steps listed at [Train Fast-RCNN on Another Dataset](https://github.com/zeyuanxy/fast-rcnn/tree/master/help/train) and [How to train fast rcnn on imagenet](http://sunshineatnoon.github.io/Train-fast-rcnn-model-on-imagenet-without-matlab/))
 
 Below is my dataset directory:
 ```
@@ -48,7 +48,7 @@ w_1087
 while I add another file--test.txt having the same format as train.txt to store the file names of the test data.
 
 ## Construct IMDB File
-### `kaggle.py`
+### kaggle.py
 We have to create a file `kaggle.py` in the directory `$FRCNN_ROOT/lib/datasets`, where `$FRCNN_ROOT` is your path to fast-rcnn directory, e.g. `/home/coldmanck/fast-rcnn`. This file defines some functions which tell fast rcnn how to read ground truth boxes and how to find images on disk. Following the example file [inria.py](https://github.com/EdisonResearch/fast-rcnn/blob/master/lib/datasets/inria.py) created by [zeyuanxy's instruction](https://github.com/zeyuanxy/fast-rcnn/tree/master/help/train) , I mainly modified some functions below. You may want to read along with my file [kaggle.py](https://github.com/coldmanck/fast-rcnn/blob/master/lib/datasets/kaggle.py).
 
 **In function `__init__(self, image_set, devkit_path)`**
@@ -80,6 +80,7 @@ Then, modifying codes to get annotations by this function. For detail, see my [k
 Also, in the for loop of process of loading object bounding boxes into a data frame, there're something should be modified. Refer to the issue of selective search, one may find that 
 - the format of proposal ROIs produced by matlab code is: [top, left, bottom, right], 1-based index.
 - while the format of proposals in demo mat file is: [left, top, right, bottom], 0-based index.
+
 In our training and testing process, in fact, we follow the first second format **[left, top, right, bottom], 0-based index**. One may see in function `_load_selective_search_roidb`: there's a line `box_list.append(raw_data[i][:, (1, 0, 3, 2)] - 1)` which dealing with this problem.
 
 Also, because the data format of Right Whale dataset which coordinates start from zero, is different from the original format, I need to minus one to fit:
@@ -89,7 +90,7 @@ y1 = float(get_data_from_tag(obj, 'ymin')) - 1
 x2 = float(get_data_from_tag(obj, 'xmax')) - 1
 y2 = float(get_data_from_tag(obj, 'ymax')) - 1
 ```
-### `factory.py`
+### factory.py
 There're some lines you have to modify:
 ```
 import datasets.kaggle
@@ -100,7 +101,7 @@ for split in ['train', 'test']:
     name = '{}_{}'.format('kaggle', split)
     __sets[name] = (lambda split=split: datasets.kaggle(split, kaggle_devkit_path))
 ```
-If you have more than one class you have to deal with, `numbers_of_classes` for-loop you have to create. You can refer to my `factory.py` [here](https://github.com/coldmanck/fast-rcnn/blob/master/lib/datasets/factory.py) (one class) and original `factory_inria.py` created by zeyuanxy [here](https://github.com/coldmanck/fast-rcnn/blob/master/lib/datasets/factory_inria.py) (two classes).
+If you have more than one class you have to deal with, `numbers_of_classes` for-loop you have to create. You can refer to my [factory.py](https://github.com/coldmanck/fast-rcnn/blob/master/lib/datasets/factory.py) (one class) and original `factory_inria.py`(https://github.com/coldmanck/fast-rcnn/blob/master/lib/datasets/factory_inria.py) (two classes) created by zeyuanxy.
 
 ## Run Selective Search
 If you have MATLAB, you may find original approach easy for you to implement. Modify the matlab file `selective_search.m` in the directory `$FRCNN_ROOT/selective_search`, If you do not have that directory, you could find it [here](https://github.com/EdisonResearch/fast-rcnn/tree/master/selective_search)).
@@ -121,7 +122,7 @@ Then run this mat to generate proposals of training data, then move the output `
 
 If you don't have MATLAB, [dlib's slective search](http://dlib.net/) is recommended, you can find details in [sunshineatnoon's instruction](http://sunshineatnoon.github.io/Train-fast-rcnn-model-on-imagenet-without-matlab/).
 
-## Modify Prototxt
+## Modify Prototxt and Rename Layers
 **Note these steps are important** for someone who may encountered error like `Check failed: ShapeEquals(proto) shape mismatch(reshape not set)`. This is my solution after encountering above error. If you followed the instruction of [Train Fast-RCNN on Another Dataset](https://github.com/zeyuanxy/fast-rcnn/tree/master/help/train) or [How to train fast rcnn on imagenet](http://sunshineatnoon.github.io/Train-fast-rcnn-model-on-imagenet-without-matlab/) but encountered the same error, consider to follow my instruction here.
 
 First, according to [Fast rcnn 訓練自己的數據庫問題小結](http://blog.csdn.net/hao529good/article/details/46544163), there're two type of pre-trained models provided in fast-rcnn, take CaffeNet for example: (1) CaffeNet.v2.caffemodel and (2) caffenet_fast_rcnn_iter_40000.caffemodel. The first model is trained on Imagenet, while the second is also trained on Imagenet but finetuned on Fast-RCNN, which cause difference of number of classes and result in error. To deal with it, rename `cls_score` and `bbox_pred` in your `train.prototxt`.
@@ -134,9 +135,47 @@ For the `bbox_pred` layer, I changed the layer name to `bbox_pred_kaggle` and ou
 (Search for `cls_score` and `bbox_pred` in the file and rename all of them, there're 6 attributes should be modified)
 See my [train.prototxt](https://github.com/coldmanck/fast-rcnn/blob/master/models/VGG16/train.prototxt) file for reference.
 
-The same remedy need to applied to `test.prototxt` when testing your Fast-RCNN. See my [test_kaggle.prototxt](https://github.com/coldmanck/fast-rcnn/blob/master/models/VGG16/test_kaggle.prototxt) file for reference.
+The same remedy is needed to applied to `test.prototxt` when testing your Fast-RCNN. See my [test_kaggle.prototxt](https://github.com/coldmanck/fast-rcnn/blob/master/models/VGG16/test_kaggle.prototxt) file for reference. note you don't need to rename `test.prototxt` to `test_DATASET.prototxt` here.
 
+## Rename others files
+Following the renaming approach, you have to modify this two layers name in some files below. Similarly, in the specific file, search for `cls_score` and `bbox_pred` and rename all of them.
+- $FRCNN_ROOT/lib/fast_rcnn/train.py
+- $FRCNN_ROOT/lib/fast_rcnn/test_train.py
+- $FRCNN_ROOT/lib/fast_rcnn/test.py
 
+## Train your Fast-RCNN
+Finally, you can train your own dataset. At `$FRCNN_ROOT`, 
+- On CaffeNet: run `./tools/train_net.py --gpu 0 --solver models/CaffeNet/solver.prototxt --weights data/imagenet_models/CaffeNet.v2.caffemodel --imdb kaggle_train`
+- On VGG_CNN: run `./tools/train_net.py --gpu 9 --solver models/VGG_CNN_M_1024/solver.prototxt --weights data/imagenet_models/VGG_CNN_M_1024.v2.caffemodel --imdb kaggle_train`
+- On VGG16: run `./tools/train_net.py --gpu 10 --solver models/VGG16/solver.prototxt --weights data/imagenet_models/VGG16.v2.caffemodel --imdb kaggle_train`
+
+The model will be saved at `$FRCNN_ROOT/output/default/train`. Copy them to '$FRCNN_ROOT/data/fast_rcnn_models/' to use `demo.py` (or my `demo_kaggle.py`) to run detection (Don't forget to backup the old one). By default, 40,000 iterations will be performed on each training process with snapshots on every 10,000 iterations, e.g. for CaffeNet, there will be 4 files: `caffenet_fast_rcnn_iter_{1, 2, 3, 4}0000.caffemodel`.
+
+## Run detection
+Before you run `$FRCNN_ROOT/tools/demo.py`, it should be modified to fit your dataset and models:
+```
+CLASSES = ('__background__','whale')
+
+# if you want to restrict the detection numbers to the specific number like me (just one detection with highest confidence), 
+# add some lines below in function vis_detections(im, class_name, dets, image_name, thresh=0.5):
+max_inds = 0
+if len(inds) == 0:
+    print("no target detected!")
+    return
+elif len(inds) > 1:
+    print("more than 1 target detected!")
+    for i in inds:
+        if(dets[i, -1] > max_score):
+            max_inds = i
+bbox = dets[max_inds, :4]
+score = dets[max_inds, -1]
+
+# if you copy the test.prototxt to test_DATASET.prototxt and rename layers name like me, remember to modify this line
+prototxt = os.path.join(cfg.ROOT_DIR, 'models', NETS[args.demo_net][0],'test_kaggle.prototxt')
+```
+You may want to see my [demo_kaggle.py](https://github.com/coldmanck/fast-rcnn/blob/master/tools/demo_kaggle.py) for detail. In addition, I trace all of my training data and save the resulting coordinate [left, top, right, bottom] into mat file. you can refer to my [demo_kaggle_all.py](https://github.com/coldmanck/fast-rcnn/blob/master/tools/demo_kaggle_all.py).
+
+Concerning to your testing data's proposals, you may want to generate from the same `selective_search.m`. It's okay, however be careful of the same problem mentioned above (reversion of coordinates). To revise it into correct format, you can refer to my [trans_selective_search.m](https://github.com/coldmanck/fast-rcnn/blob/master/kaggle/trans_selective_search.m) (convert into mat file for each picture, e.g. w_1234.mat) or [trans_selective_search_allmat.m](https://github.com/coldmanck/fast-rcnn/blob/master/kaggle/trans_selective_search_allmat.m) (convert all into single mat file).
 
 ## Reference
 1. [Train Fast-RCNN on Another Dataset](https://github.com/zeyuanxy/fast-rcnn/tree/master/help/train)
