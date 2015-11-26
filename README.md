@@ -123,15 +123,18 @@ If you don't have MATLAB, [dlib's slective search](http://dlib.net/) is recommen
 
 ## Modify Prototxt
 **Note these steps are important** for someone who may encountered error like `Check failed: ShapeEquals(proto) shape mismatch(reshape not set)`. This is my solution after encountering above error. If you followed the instruction of [Train Fast-RCNN on Another Dataset](https://github.com/zeyuanxy/fast-rcnn/tree/master/help/train) or [How to train fast rcnn on imagenet](http://sunshineatnoon.github.io/Train-fast-rcnn-model-on-imagenet-without-matlab/) but encountered the same error, consider to follow my instruction here.
-First, 
+
+First, according to [Fast rcnn 訓練自己的數據庫問題小結](http://blog.csdn.net/hao529good/article/details/46544163), there're two type of pre-trained models provided in fast-rcnn, take CaffeNet for example: (1) CaffeNet.v2.caffemodel and (2) caffenet_fast_rcnn_iter_40000.caffemodel. The first model is trained on Imagenet, while the second is also trained on Imagenet but finetuned on Fast-RCNN, which cause difference of number of classes and result in error. To deal with it, rename `cls_score` and `bbox_pred` in your `train.prototxt`.
+
 Sine I have ony two classes(**background** and **kaggle**), I need to change the network structure. Depending on which pre-trained model you would like to train on, modify files in `$FRCNN_ROOT/models/{CaffeNet, VGG16, VGG_CNN_M_1024}/train.prototxt` to fit the dataset.
 
-For the input layer, we need to change input class to 2: param_str: `'num_classes': 2`
-For the clsscore layer, we need to change output class to 2: `numoutput: 2`
-For the bboxpred layer, we need to change output to 2*4=8: `numoutput: 18`
-See my [test_kaggle.prototxt](https://github.com/coldmanck/fast-rcnn/blob/master/models/VGG16/test_kaggle.prototxt) file for reference.
+For the input layer, we need to change input class to 2: param_str: `"'num_classes': 2"`
+For the `cls_score` layer, I changed the layer name to `cls_score_kaggle` and output class to 2: `numoutput: 2`
+For the `bbox_pred` layer, I changed the layer name to `bbox_pred_kaggle` and output to 2*4=8: `numoutput: 8`
+(Search for `cls_score` and `bbox_pred` in the file and rename all of them, there're 6 attributes should be modified)
+See my [train.prototxt](https://github.com/coldmanck/fast-rcnn/blob/master/models/VGG16/train.prototxt) file for reference.
 
-
+The same remedy need to applied to `test.prototxt` when testing your Fast-RCNN. See my [test_kaggle.prototxt](https://github.com/coldmanck/fast-rcnn/blob/master/models/VGG16/test_kaggle.prototxt) file for reference.
 
 
 
