@@ -1,5 +1,5 @@
 (Concerning to original README.md, please refer to README_ORIG.md.)
-# Implementation of *Fast R-CNN* on [Right Whale Recognition Dataset](https://www.kaggle.com/c/noaa-right-whale-recognition) 
+# Training Fast R-CNN on [Right Whale Recognition Dataset](https://www.kaggle.com/c/noaa-right-whale-recognition) 
 Before starting to train your Fast-RCNN on another dataset with this tutorial, please note:
 - in order to avoid unknown errors which are unrelated to below steps, ensure you've followed the original steps to reproduce the result of demo successfully. 
 - For trouble-shooting, see the bottom of this file.
@@ -185,6 +185,15 @@ prototxt = os.path.join(cfg.ROOT_DIR, 'models', NETS[args.demo_net][0],'test_kag
 You may want to see my [demo_kaggle.py](https://github.com/coldmanck/fast-rcnn/blob/master/tools/demo_kaggle.py) for detail. In addition, I trace all of my training data and save the resulting coordinate [left, top, right, bottom] into mat file. you can refer to my [demo_kaggle_all.py](https://github.com/coldmanck/fast-rcnn/blob/master/tools/demo_kaggle_all.py).
 
 **Warning:** Concerning to your testing data's proposals, you may want to generate from the same `selective_search.m`. It's okay, however be careful of the same problem mentioned above (reversion of coordinates). To revise the output mat file into correct format, you can refer to my [trans_selective_search.m](https://github.com/coldmanck/fast-rcnn/blob/master/data/kaggle/trans_selective_search.m) (convert into mat file for each picture, e.g. w_1234.mat) or [trans_selective_search_allmat.m](https://github.com/coldmanck/fast-rcnn/blob/master/data/kaggle/trans_selective_search_allmat.m) (convert all into single mat file).
+
+## Demo
+<tr>
+<td>
+<img src="result/test_img/w_126_whale.png" width="45%" />
+<img src="result/test_img/w_276_whale.png" width="45%" />
+</td>
+</tr>
+
 
 ## Trouble-Shooting
 **Error message** `Gdk-CRITICAL **: gdk_cursor_new_for_display: assertion 'GDK_IS_DISPLAY (display)' failed`
