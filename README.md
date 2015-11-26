@@ -1,6 +1,6 @@
 (Concerning to original README.md, please refer to README_ORIG.md.)
 # Implementation of *Fast* R-CNN on Another Dataset: [Right Whale Recognition](https://www.kaggle.com/c/noaa-right-whale-recognition)
-Before starting to train your Fast-RCNN on another dataset with this tutorial, in order to avoid unknown errors which are unrelated to these steps, please ensure you've followed the original steps to reproduce the result of demo successfully.
+Before starting to train your Fast-RCNN on another dataset with this tutorial, in order to avoid unknown errors which are unrelated to these steps, please ensure you've followed the original steps to reproduce the result of demo successfully. For trouble-shooting, see bottom of this file.
 
 ## Preparing Dataset
 Following the steps below, prepare your own dataset. (you may want to compare with similar steps listed at [Train Fast-RCNN on Another Dataset](https://github.com/zeyuanxy/fast-rcnn/tree/master/help/train) and [How to train fast rcnn on imagenet](http://sunshineatnoon.github.io/Train-fast-rcnn-model-on-imagenet-without-matlab/))
@@ -177,8 +177,26 @@ You may want to see my [demo_kaggle.py](https://github.com/coldmanck/fast-rcnn/b
 
 Concerning to your testing data's proposals, you may want to generate from the same `selective_search.m`. It's okay, however be careful of the same problem mentioned above (reversion of coordinates). To revise it into correct format, you can refer to my [trans_selective_search.m](https://github.com/coldmanck/fast-rcnn/blob/master/kaggle/trans_selective_search.m) (convert into mat file for each picture, e.g. w_1234.mat) or [trans_selective_search_allmat.m](https://github.com/coldmanck/fast-rcnn/blob/master/kaggle/trans_selective_search_allmat.m) (convert all into single mat file).
 
+## Trouble-Shooting
+**Error message** `Gdk-CRITICAL **: gdk_cursor_new_for_display: assertion 'GDK_IS_DISPLAY (display)' failed`
+
+if you use ssh to remote machine, try ssh with `-X` option to enables X11 forwarding. Then tell matplotlib not to try to load up GTK, you should insert code below into the python file, e.g. in `$FRCNN_ROOT/tools/demo.py`:
+```
+import matplotlib
+matplotlib.use('Agg')
+```
+
+**Error message** `ImportError: libcudart.so.6.5: cannot open shared object file: No such file or directory`
+
+Run `$ export LD_LIBRARY_PATH=/usr/local/cuda/lib64` in every session (every connection to remote machine).
+
+**Error message** `Check failed: ShapeEquals(proto) shape mismatch(reshape not set)`
+
+Follow my renaming approach (rename `bbox_pred` and `cls_score`) descripted in this article to re-train your model.
+
 ## Reference
 1. [Train Fast-RCNN on Another Dataset](https://github.com/zeyuanxy/fast-rcnn/tree/master/help/train)
 2. [How to train fast rcnn on imagenet](http://sunshineatnoon.github.io/Train-fast-rcnn-model-on-imagenet-without-matlab/)
 3. [Selective Search Configuration](https://github.com/rbgirshick/fast-rcnn/issues/26)
 4. [Fast rcnn 訓練自己的數據庫問題小結](http://blog.csdn.net/hao529good/article/details/46544163)
+5. [How to forward X over SSH from Ubuntu machine?](http://unix.stackexchange.com/questions/12755/how-to-forward-x-over-ssh-from-ubuntu-machine)
