@@ -84,7 +84,7 @@ Also, in the for loop of process of loading object bounding boxes into a data fr
 - the format of proposal ROIs produced by matlab code is: [top, left, bottom, right], 1-based index.
 - while the format of proposals in demo mat file is: [left, top, right, bottom], 0-based index.
 
-In our training and testing process, in fact, we follow the first second format **[left, top, right, bottom], 0-based index**. One may see in function `_load_selective_search_roidb`, there's a line `box_list.append(raw_data[i][:, (1, 0, 3, 2)] - 1)` which dealing with this problem.
+In the training and testing process of Fast-RCNN, in fact, it follows the second format **[left, top, right, bottom], 0-based index**. One may see in function `_load_selective_search_roidb`, there's a line `box_list.append(raw_data[i][:, (1, 0, 3, 2)] - 1)` which dealing with this problem.
 
 Also, because the data format of Right Whale dataset which coordinates start from zero is different from the original format, I need to minus one to fit:
 ```
@@ -133,7 +133,7 @@ If you don't have MATLAB, [dlib's slective search](http://dlib.net/) is recommen
 ## Modify Prototxt and Rename Layers
 **Note these steps are important for someone who may encountered error like `Check failed: ShapeEquals(proto) shape mismatch(reshape not set)`**. This is my solution after encountering above error. If you followed the instruction of [Train Fast-RCNN on Another Dataset](https://github.com/zeyuanxy/fast-rcnn/tree/master/help/train) or [How to train fast rcnn on imagenet](http://sunshineatnoon.github.io/Train-fast-rcnn-model-on-imagenet-without-matlab/) but encountered the same error, consider to follow my instruction here.
 
-First, according to [Fast rcnn 訓練自己的數據庫問題小結](http://blog.csdn.net/hao529good/article/details/46544163), there're two type of pre-trained models provided in fast-rcnn. Take CaffeNet for example: (1) CaffeNet.v2.caffemodel and (2) caffenet_fast_rcnn_iter_40000.caffemodel. The first model is trained on Imagenet, while the second is also trained on Imagenet but finetuned on Fast-RCNN, which cause difference of number of classes and result in error. To deal with it, rename `cls_score` and `bbox_pred` in your `train.prototxt`. For instance, I rename it as `cls_score_kaggle` and `bbox_pred_kaggle`.
+First, according to [Fast rcnn 訓練自己的數據庫問題小結](http://blog.csdn.net/hao529good/article/details/46544163), there're two types of pre-trained models provided in fast-rcnn. Take CaffeNet for example: (1) CaffeNet.v2.caffemodel and (2) caffenet_fast_rcnn_iter_40000.caffemodel. The first model is trained on Imagenet, while the second is also trained on Imagenet but finetuned on Fast-RCNN, which cause difference of number of classes and result in error. To deal with it, rename `cls_score` and `bbox_pred` in your `train.prototxt`. For instance, I rename it as `cls_score_kaggle` and `bbox_pred_kaggle`.
 
 Since I have ony two classes(**background** and **kaggle**), I need to change the network structure. Depending on which pre-trained model you would like to train on, modify files in `$FRCNN_ROOT/models/{CaffeNet, VGG16, VGG_CNN_M_1024}/train.prototxt` to fit the dataset.
 ```
@@ -155,8 +155,8 @@ Following the renaming approach, you have to modify this two layers name in some
 ## Train your Fast-RCNN!
 Finally, you can train your own dataset. At `$FRCNN_ROOT`, 
 - On CaffeNet: run `./tools/train_net.py --gpu 0 --solver models/CaffeNet/solver.prototxt --weights data/imagenet_models/CaffeNet.v2.caffemodel --imdb kaggle_train`
-- On VGG_CNN: run `./tools/train_net.py --gpu 9 --solver models/VGG_CNN_M_1024/solver.prototxt --weights data/imagenet_models/VGG_CNN_M_1024.v2.caffemodel --imdb kaggle_train`
-- On VGG16: run `./tools/train_net.py --gpu 10 --solver models/VGG16/solver.prototxt --weights data/imagenet_models/VGG16.v2.caffemodel --imdb kaggle_train`
+- On VGG_CNN: run `./tools/train_net.py --gpu 1 --solver models/VGG_CNN_M_1024/solver.prototxt --weights data/imagenet_models/VGG_CNN_M_1024.v2.caffemodel --imdb kaggle_train`
+- On VGG16: run `./tools/train_net.py --gpu 2 --solver models/VGG16/solver.prototxt --weights data/imagenet_models/VGG16.v2.caffemodel --imdb kaggle_train`
 
 By default, 40,000 iterations will be performed on each training process with snapshots on every 10,000 iterations, e.g. for CaffeNet, there will be 4 files: `caffenet_fast_rcnn_iter_{1, 2, 3, 4}0000.caffemodel`. The model will be saved at `$FRCNN_ROOT/output/default/train`. Copy them to `$FRCNN_ROOT/data/fast_rcnn_models/` to use `demo.py` (or my `demo_kaggle.py`) to run detection (Don't forget to backup the old one). 
 
