@@ -10,7 +10,7 @@ layer {
   python_param {
     module: 'roi_data_layer.layer'
     layer: 'RoIDataLayer'
-    param_str: "'num_classes': 21"
+    param_str: "'num_classes': 2"
   }
 }
 layer {
@@ -459,10 +459,10 @@ layer {
   }
 }
 layer {
-  name: "cls_score"
+  name: "cls_score_kaggle"
   type: "InnerProduct"
   bottom: "fc7"
-  top: "cls_score"
+  top: "cls_score_kaggle"
   param {
     lr_mult: 1
     decay_mult: 1
@@ -472,7 +472,7 @@ layer {
     decay_mult: 0
   }
   inner_product_param {
-    num_output: 21
+    num_output: 2
     weight_filler {
       type: "gaussian"
       std: 0.01
@@ -484,10 +484,10 @@ layer {
   }
 }
 layer {
-  name: "bbox_pred"
+  name: "bbox_pred_kaggle"
   type: "InnerProduct"
   bottom: "fc7"
-  top: "bbox_pred"
+  top: "bbox_pred_kaggle"
   param {
     lr_mult: 1
     decay_mult: 1
@@ -497,7 +497,7 @@ layer {
     decay_mult: 0
   }
   inner_product_param {
-    num_output: 84
+    num_output: 8
     weight_filler {
       type: "gaussian"
       std: 0.001
@@ -511,7 +511,7 @@ layer {
 layer {
   name: "loss_cls"
   type: "SoftmaxWithLoss"
-  bottom: "cls_score"
+  bottom: "cls_score_kaggle"
   bottom: "labels"
   top: "loss_cls"
   loss_weight: 1
@@ -519,7 +519,7 @@ layer {
 layer {
   name: "loss_bbox"
   type: "SmoothL1Loss"
-  bottom: "bbox_pred"
+  bottom: "bbox_pred_kaggle"
   bottom: "bbox_targets"
   bottom: "bbox_loss_weights"
   top: "loss_bbox"

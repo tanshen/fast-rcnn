@@ -10,6 +10,7 @@
 __sets = {}
 
 import datasets.pascal_voc
+import datasets.kaggle
 import numpy as np
 
 def _selective_search_IJCV_top_k(split, year, top_k):
@@ -36,6 +37,12 @@ for top_k in np.arange(1000, 11000, 1000):
             name = 'voc_{}_{}_top_{:d}'.format(year, split, top_k)
             __sets[name] = (lambda split=split, year=year, top_k=top_k:
                     _selective_search_IJCV_top_k(split, year, top_k))
+
+# Set up kaggle_<split> using selective search "fast" mode
+kaggle_devkit_path = '/home/coldmanck/kaggle'
+for split in ['train', 'test']:
+    name = '{}_{}'.format('kaggle', split)
+    __sets[name] = (lambda split=split: datasets.kaggle(split, kaggle_devkit_path))
 
 def get_imdb(name):
     """Get an imdb (image database) by name."""

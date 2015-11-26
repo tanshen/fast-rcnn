@@ -10,6 +10,8 @@
 """Train a Fast R-CNN network on a region of interest database."""
 
 import _init_paths
+import matplotlib
+matplotlib.use('Agg')
 from fast_rcnn.train import get_training_roidb, train_net
 from fast_rcnn.config import cfg, cfg_from_file, cfg_from_list, get_output_dir
 from datasets.factory import get_imdb

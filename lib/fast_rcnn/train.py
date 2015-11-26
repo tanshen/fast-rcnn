@@ -14,6 +14,9 @@ from utils.timer import Timer
 import numpy as np
 import os
 
+import matplotlib 
+matplotlib.use('Agg')
+
 from caffe.proto import caffe_pb2
 import google.protobuf as pb2
 
@@ -53,15 +56,15 @@ class SolverWrapper(object):
 
         if cfg.TRAIN.BBOX_REG:
             # save original values
-            orig_0 = net.params['bbox_pred'][0].data.copy()
-            orig_1 = net.params['bbox_pred'][1].data.copy()
+            orig_0 = net.params['bbox_pred_kaggle'][0].data.copy()
+            orig_1 = net.params['bbox_pred_kaggle'][1].data.copy()
 
             # scale and shift with bbox reg unnormalization; then save snapshot
-            net.params['bbox_pred'][0].data[...] = \
-                    (net.params['bbox_pred'][0].data *
+            net.params['bbox_pred_kaggle'][0].data[...] = \
+                    (net.params['bbox_pred_kaggle'][0].data *
                      self.bbox_stds[:, np.newaxis])
-            net.params['bbox_pred'][1].data[...] = \
-                    (net.params['bbox_pred'][1].data *
+            net.params['bbox_pred_kaggle'][1].data[...] = \
+                    (net.params['bbox_pred_kaggle'][1].data *
                      self.bbox_stds + self.bbox_means)
 
         if not os.path.exists(self.output_dir):
@@ -78,8 +81,8 @@ class SolverWrapper(object):
 
         if cfg.TRAIN.BBOX_REG:
             # restore net to original state
-            net.params['bbox_pred'][0].data[...] = orig_0
-            net.params['bbox_pred'][1].data[...] = orig_1
+            net.params['bbox_pred_kaggle'][0].data[...] = orig_0
+            net.params['bbox_pred_kaggle'][1].data[...] = orig_1
 
     def train_model(self, max_iters):
         """Network training loop."""

@@ -285,10 +285,10 @@ layer {
   }
 }
 layer {
-  name: "bbox_pred"
+  name: "bbox_pred_kaggle"
   type: "InnerProduct"
   bottom: "fc7"
-  top: "bbox_pred"
+  top: "bbox_pred_kaggle"
   param {
     lr_mult: 1
     decay_mult: 1

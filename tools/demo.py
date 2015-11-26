@@ -13,6 +13,9 @@ Demo script showing detections in sample images.
 See README.md for installation instructions before running.
 """
 
+import matplotlib
+matplotlib.use('Agg')
+
 import _init_paths
 from fast_rcnn.config import cfg
 from fast_rcnn.test import im_detect
@@ -39,7 +42,7 @@ NETS = {'vgg16': ('VGG16',
                      'caffenet_fast_rcnn_iter_40000.caffemodel')}
 
 
-def vis_detections(im, class_name, dets, thresh=0.5):
+def vis_detections(im, class_name, dets, image_name, thresh=0.5):
     """Draw detected bounding boxes."""
     inds = np.where(dets[:, -1] >= thresh)[0]
     if len(inds) == 0:
@@ -70,6 +73,7 @@ def vis_detections(im, class_name, dets, thresh=0.5):
     plt.axis('off')
     plt.tight_layout()
     plt.draw()
+    plt.savefig(image_name + '_' + class_name)
 
 def demo(net, image_name, classes):
     """Detect object classes in an image using pre-computed object proposals."""
@@ -107,7 +111,7 @@ def demo(net, image_name, classes):
         dets = dets[keep, :]
         print 'All {} detections with p({} | box) >= {:.1f}'.format(cls, cls,
                                                                     CONF_THRESH)
-        vis_detections(im, cls, dets, thresh=CONF_THRESH)
+        vis_detections(im, cls, dets, image_name, thresh=CONF_THRESH)
 
 def parse_args():
     """Parse input arguments."""
