@@ -149,9 +149,9 @@ The same remedy is needed to be applied to `test.prototxt` when testing your Fas
 **Rename layers in other files**
 
 Following the renaming approach, you have to modify this two layers name in some files below. Similarly, in the specific file, search for `cls_score` and `bbox_pred` and rename all of them.
-- $FRCNN_ROOT/lib/fast_rcnn/train.py
-- $FRCNN_ROOT/lib/fast_rcnn/test_train.py
-- $FRCNN_ROOT/lib/fast_rcnn/test.py
+- `$FRCNN_ROOT/lib/fast_rcnn/train.py`
+- `$FRCNN_ROOT/lib/fast_rcnn/test_train.py`
+- `$FRCNN_ROOT/lib/fast_rcnn/test.py`
 
 ## Train your Fast-RCNN!
 Finally, you can train your own dataset. At `$FRCNN_ROOT`, 
