@@ -1,7 +1,7 @@
 (Concerning to original README.md, please refer to README_ORIG.md.)
 # Training Fast R-CNN on [Right Whale Recognition Dataset](https://www.kaggle.com/c/noaa-right-whale-recognition) 
 Before starting to train your Fast-RCNN on another dataset with this tutorial, please note:
-- in order to avoid unknown errors which are unrelated to below steps, ensure you've followed the original steps to reproduce the result of demo successfully. 
+- In order to avoid unknown errors which are unrelated to below steps, ensure you've followed the original steps to reproduce the result of demo successfully. 
 - For trouble-shooting, see the bottom of this file.
 
 ## Preparing Dataset
@@ -80,11 +80,11 @@ def get_data_from_tag(node,tag):
 ```
 Then, modifying other codes to get annotations by this function. For detail, see my [kaggle.py](https://github.com/coldmanck/fast-rcnn/blob/master/lib/datasets/kaggle.py).
 
-Also, in the for loop of process of loading object bounding boxes into a data frame, there're something should be modified. Refer to the [issue of selective search](https://github.com/rbgirshick/fast-rcnn/issues/26), one may find that 
+Also, in the for loop of process of loading object bounding boxes into a data frame, there're something should be modified. Refer to the [issue of selective search](https://github.com/rbgirshick/fast-rcnn/issues/26), you may find that 
 - the format of proposal ROIs produced by matlab code is: [top, left, bottom, right], 1-based index.
 - while the format of proposals in demo mat file is: [left, top, right, bottom], 0-based index.
 
-In the training and testing process of Fast-RCNN, in fact, it follows the second format **[left, top, right, bottom], 0-based index**. One may see in function `_load_selective_search_roidb`, there's a line `box_list.append(raw_data[i][:, (1, 0, 3, 2)] - 1)` which dealing with this problem.
+In the training and testing process of Fast-RCNN, in fact, it follows the second format **[left, top, right, bottom], 0-based index**. You may see in function `_load_selective_search_roidb`, there's a line `box_list.append(raw_data[i][:, (1, 0, 3, 2)] - 1)` which dealing with this problem.
 
 Also, because the data format of Right Whale dataset which coordinates start from zero is different from the original format, I need to minus one to fit:
 ```
@@ -131,9 +131,9 @@ Then run this mat to generate proposals of training data, then move the output `
 If you don't have MATLAB, [dlib's slective search](http://dlib.net/) is recommended, you can find details in [sunshineatnoon's instruction](http://sunshineatnoon.github.io/Train-fast-rcnn-model-on-imagenet-without-matlab/).
 
 ## Modify Prototxt and Rename Layers
-**Note these steps are important for someone who may encountered error like `Check failed: ShapeEquals(proto) shape mismatch(reshape not set)`**. This is my solution after encountering above error. If you followed the instruction of [Train Fast-RCNN on Another Dataset](https://github.com/zeyuanxy/fast-rcnn/tree/master/help/train) or [How to train fast rcnn on imagenet](http://sunshineatnoon.github.io/Train-fast-rcnn-model-on-imagenet-without-matlab/) but encountered the same error, consider to follow my instruction here.
+**Note these steps are important for those who may encountered error like `Check failed: ShapeEquals(proto) shape mismatch(reshape not set)` when detecting**. This is my solution after encountering above error. If you followed the instruction of [Train Fast-RCNN on Another Dataset](https://github.com/zeyuanxy/fast-rcnn/tree/master/help/train) or [How to train fast rcnn on imagenet](http://sunshineatnoon.github.io/Train-fast-rcnn-model-on-imagenet-without-matlab/) but encountered the same error, consider to follow my instruction here.
 
-First, according to [Fast rcnn 訓練自己的數據庫問題小結](http://blog.csdn.net/hao529good/article/details/46544163), there're two types of pre-trained models provided in fast-rcnn. Take CaffeNet for example: (1) CaffeNet.v2.caffemodel and (2) caffenet_fast_rcnn_iter_40000.caffemodel. The first model is trained on Imagenet, while the second is also trained on Imagenet but finetuned on Fast-RCNN, which cause difference of number of classes and result in error. To deal with it, rename `cls_score` and `bbox_pred` in your `train.prototxt`. For instance, I rename it as `cls_score_kaggle` and `bbox_pred_kaggle`.
+First, according to [Fast rcnn 訓練自己的數據庫問題小結](http://blog.csdn.net/hao529good/article/details/46544163), there're two types of pre-trained models provided in fast-rcnn. Take CaffeNet for example: (1) CaffeNet.v2.caffemodel and (2) caffenet_fast_rcnn_iter_40000.caffemodel. The first model is trained on Imagenet, while the second is also trained on Imagenet but finetuned on Fast-RCNN, which cause difference of number of classes and result in error. To deal with it, rename `cls_score` and `bbox_pred` in your `train.prototxt`. For instance, I rename it to `cls_score_kaggle` and `bbox_pred_kaggle`.
 
 Since I have ony two classes(**background** and **kaggle**), I need to change the network structure. Depending on which pre-trained model you would like to train on, modify files in `$FRCNN_ROOT/models/{CaffeNet, VGG16, VGG_CNN_M_1024}/train.prototxt` to fit the dataset.
 ```
@@ -144,9 +144,10 @@ For the `bbox_pred` layer, I changed the layer name to `bbox_pred_kaggle` and ou
 ```
 See my [train.prototxt](https://github.com/coldmanck/fast-rcnn/blob/master/models/VGG16/train.prototxt) file for reference.
 
-The same remedy is needed to applied to `test.prototxt` when testing your Fast-RCNN. See my [test_kaggle.prototxt](https://github.com/coldmanck/fast-rcnn/blob/master/models/VGG16/test_kaggle.prototxt) file for reference. note you don't need to rename `test.prototxt` to `test_DATASET.prototxt` here.
+The same remedy is needed to be applied to `test.prototxt` when testing your Fast-RCNN. See my [test_kaggle.prototxt](https://github.com/coldmanck/fast-rcnn/blob/master/models/VGG16/test_kaggle.prototxt) file for reference. Note that you don't need to rename `test.prototxt` to `test_DATASET.prototxt` as me.
 
-## Rename other files
+**Rename layers in other files**
+
 Following the renaming approach, you have to modify this two layers name in some files below. Similarly, in the specific file, search for `cls_score` and `bbox_pred` and rename all of them.
 - $FRCNN_ROOT/lib/fast_rcnn/train.py
 - $FRCNN_ROOT/lib/fast_rcnn/test_train.py
