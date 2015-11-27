@@ -212,7 +212,7 @@ Run `$ export LD_LIBRARY_PATH=/usr/local/cuda/lib64` in every session (every con
 
 **Error message** `Check failed: ShapeEquals(proto) shape mismatch(reshape not set)`
 
-First, the answer in stackoverflow saying that it's may caused by forgetting to change the number of classes in `test.prototxt` (same as `train.protxt`) to fit your dataset. If you've changed it but still encounterd the error, follow my renaming approach (rename layers `bbox_pred` and `cls_score`) descripted in this article to re-train your model.
+First, one of the [answer](http://stackoverflow.com/a/31251378/4447620) in stackoverflow saying that it's may caused by forgetting to change the number of classes in `test.prototxt` (same as `train.protxt`) to fit your dataset. If you've changed it but still encounterd the error, follow my renaming approach (rename layers `bbox_pred` and `cls_score`) descripted in this article to re-train your model.
 
 ## Reference
 1. [Train Fast-RCNN on Another Dataset](https://github.com/zeyuanxy/fast-rcnn/tree/master/help/train)
@@ -220,3 +220,4 @@ First, the answer in stackoverflow saying that it's may caused by forgetting to 
 3. [Selective Search Configuration](https://github.com/rbgirshick/fast-rcnn/issues/26)
 4. [Fast rcnn 訓練自己的數據庫問題小結](http://blog.csdn.net/hao529good/article/details/46544163)
 5. [How to forward X over SSH from Ubuntu machine?](http://unix.stackexchange.com/questions/12755/how-to-forward-x-over-ssh-from-ubuntu-machine)
+6. [[Caffe]: Check failed: ShapeEquals(proto) shape mismatch (reshape not set)](http://stackoverflow.com/a/31251378/4447620)
