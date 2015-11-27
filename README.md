@@ -137,7 +137,7 @@ First, according to [Fast rcnn 訓練自己的數據庫問題小結](http://blog
 
 Since I have ony two classes(**background** and **kaggle**), I need to change the network structure. Depending on which pre-trained model you would like to train on, modify files in `$FRCNN_ROOT/models/{CaffeNet, VGG16, VGG_CNN_M_1024}/train.prototxt` to fit the dataset.
 
-- For the input layer, we need to change input class to 2: param_str: `"'num_classes': 2"`
+- For the input layer, I changed the input class to 2: param_str: `"'num_classes': 2"`
 - For the `cls_score` layer, I changed the layer name to `cls_score_kaggle` and output class to 2: `numoutput: 2`
 - For the `bbox_pred` layer, I changed the layer name to `bbox_pred_kaggle` and output to 2*4=8: `numoutput: 8`
 
