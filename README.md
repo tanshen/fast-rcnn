@@ -169,6 +169,7 @@ CLASSES = ('__background__','whale')
 
 # if you want to restrict the detection numbers to the specific number like me (just one detection with highest confidence), 
 # add some lines below in function vis_detections(im, class_name, dets, image_name, thresh=0.5):
+max_score = 0
 max_inds = 0
 if len(inds) == 0:
     print('no target detected!')
@@ -181,7 +182,8 @@ elif len(inds) > 1:
 bbox = dets[max_inds, :4]
 score = dets[max_inds, -1]
 
-# if you copy the test.prototxt to test_DATASET.prototxt and rename layers name like me, remember to modify this line
+# if you copy the test.prototxt to test_DATASET.prototxt 
+# and rename layers name like me, remember to modify this line
 prototxt = os.path.join(cfg.ROOT_DIR, 'models', NETS[args.demo_net][0],'test_kaggle.prototxt')
 ```
 You may want to see my [demo_kaggle.py](https://github.com/coldmanck/fast-rcnn/blob/master/tools/demo_kaggle.py) for detail. In addition, I trace all of my training data and save the resulting coordinate [left, top, right, bottom] into mat file. you can refer to my [demo_kaggle_all.py](https://github.com/coldmanck/fast-rcnn/blob/master/tools/demo_kaggle_all.py).
