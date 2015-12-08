@@ -71,7 +71,7 @@ assert os.path.exists(image_path), 'Path does not exist: {}'.format(image_path)
 return image_path
 ```
 
-**In function `_load_imagenet_annotation`**
+**In function `_load_whale_annotation`**
 
 This is th function for parsing annotations which should be figured out carefully. Here, I follow the instruction of [sunshinearnoon](http://sunshineatnoon.github.io/Train-fast-rcnn-model-on-imagenet-without-matlab/), define a new inner-function to get the tags from xml files.
 ```
