@@ -115,7 +115,7 @@ Again, remember to import: `from .kaggle import kaggle`
 If you have MATLAB, you may find original approach easy for you to implement. Modify the matlab file `selective_search.m` in the directory `$FRCNN_ROOT/selective_search`, If you do not have that directory, you could find it [here](https://github.com/EdisonResearch/fast-rcnn/tree/master/selective_search)).
 ```
 image_db = '/home/coldmanck/kaggle';
-    image_filenames = textread([image_db '/data/ImageSets/train.txt'], '%s', 'delimite    r', '\n');
+    image_filenames = textread([image_db '/data/ImageSets/train.txt'], '%s', 'delimiter', '\n');
     for i = 1:length(image_filenames)
         if exist([image_db '/data/Images/' image_filenames{i} '.jpg'], 'file') == 2
         image_filenames{i} = [image_db '/data/Images/' image_filenames{i} '.jpg'];
