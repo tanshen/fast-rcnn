@@ -131,7 +131,7 @@ Then run this mat to generate proposals of training data, then move the output `
 If you don't have MATLAB, [dlib's slective search](http://dlib.net/) is recommended, you can find details in [sunshineatnoon's instruction](http://sunshineatnoon.github.io/Train-fast-rcnn-model-on-imagenet-without-matlab/).
 
 ## Modify Prototxt and Rename Layers
-**Note steps of renaming layers are for those who may encountered error like `Check failed: ShapeEquals(proto) shape mismatch(reshape not set)` when detecting. However if it's your first time to train your Fast-RCNN, you may not have to follow my renaming layers steps below (but still be sure to change the class number)**. If you followed the instruction of [Train Fast-RCNN on Another Dataset](https://github.com/zeyuanxy/fast-rcnn/tree/master/help/train) or [How to train fast rcnn on imagenet](http://sunshineatnoon.github.io/Train-fast-rcnn-model-on-imagenet-without-matlab/) but still encountered the same error, consider to follow my instruction here. 
+**Note steps of renaming layers are for those who may encountered error like `Check failed: ShapeEquals(proto) shape mismatch(reshape not set)` when detecting. ~~However if it's your first time to train your Fast-RCNN, you may not have to follow my renaming layers steps below (but still be sure to change the class number)~~ (12/9 22:50 UTC+8 update) In order to train on your own dataset, you should rename the last layer to reinitialize weights.** If you followed the instruction of [Train Fast-RCNN on Another Dataset](https://github.com/zeyuanxy/fast-rcnn/tree/master/help/train) or [How to train fast rcnn on imagenet](http://sunshineatnoon.github.io/Train-fast-rcnn-model-on-imagenet-without-matlab/) but still encountered the same error, consider to follow my instruction here. 
 
 First, according to [Fast rcnn 訓練自己的數據庫問題小結](http://blog.csdn.net/hao529good/article/details/46544163), there're two types of pre-trained models provided in fast-rcnn. Take CaffeNet for example: (1) CaffeNet.v2.caffemodel and (2) caffenet_fast_rcnn_iter_40000.caffemodel. The first model is trained on Imagenet, while the second is also trained on Imagenet but finetuned on Fast-RCNN, which cause difference of number of classes and result in error. To deal with it, rename `cls_score` and `bbox_pred` in your `train.prototxt`. For instance, I rename it to `cls_score_kaggle` and `bbox_pred_kaggle`.
 
@@ -214,7 +214,7 @@ Run `$ export LD_LIBRARY_PATH=/usr/local/cuda/lib64` in every session (every con
 
 **Error message** `Check failed: ShapeEquals(proto) shape mismatch(reshape not set)`
 
-First, one of the [answer](http://stackoverflow.com/a/31251378/4447620) in stackoverflow saying that it's may caused by forgetting to change the number of classes in `test.prototxt` (same as `train.protxt`) to fit your dataset. If you've changed it but still encounterd the error, follow my renaming approach (rename layers `bbox_pred` and `cls_score`) descripted in this article to re-train your model.
+First, one of the [answer](http://stackoverflow.com/a/31251378/4447620) in stackoverflow saying that it's may caused by forgetting to change the number of classes in `test.prototxt` (same as `train.protxt`) to fit your dataset. If you've changed it but still encounterd the error, follow my renaming approach (rename the last layer, i.e. `bbox_pred` and `cls_score`) descripted in this article to re-train your model.
 
 ## Reference
 1. [Train Fast-RCNN on Another Dataset](https://github.com/zeyuanxy/fast-rcnn/tree/master/help/train)
