@@ -179,6 +179,7 @@ elif len(inds) > 1:
     for i in inds:
         if(dets[i, -1] > max_score):
             max_inds = i
+            max_score = dets[i, -1]
 bbox = dets[max_inds, :4]
 score = dets[max_inds, -1]
 
