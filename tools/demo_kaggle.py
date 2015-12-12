@@ -50,6 +50,7 @@ def vis_detections(im, class_name, dets, image_name, thresh=0.5):
         for i in inds:
             if(dets[i, -1] > max_score):
                 max_inds = i
+                max_score = dets[i, -1]
 
     im = im[:, :, (2, 1, 0)]
     fig, ax = plt.subplots(figsize=(12, 12))
