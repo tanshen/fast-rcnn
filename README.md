@@ -147,7 +147,7 @@ See my [train.prototxt](https://github.com/coldmanck/fast-rcnn/blob/master/model
 
 The same remedy is needed to be applied to `test.prototxt` when testing your Fast-RCNN. See my [test_kaggle.prototxt](https://github.com/coldmanck/fast-rcnn/blob/master/models/VGG16/test_kaggle.prototxt) file for reference. Note that you don't need to rename `test.prototxt` to `test_DATASET.prototxt` as me.
 
-**Rename layers in other files**
+### Rename layers in other files
 
 Following the renaming approach, you have to modify this two layers name in some files below. Similarly, in the specific file, search for `cls_score` and `bbox_pred` and rename all of them.
 - `$FRCNN_ROOT/lib/fast_rcnn/train.py`
