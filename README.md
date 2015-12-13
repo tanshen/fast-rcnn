@@ -39,7 +39,7 @@ kaggle
 ```
 If you use MATLAB to label the training image like me, or your dataset is in `.mat` format, for the conversion from `.mat` file to `.xml` file, see my [convert_mat_to_xml.m](https://github.com/coldmanck/fast-rcnn/blob/master/convert_mat_to_xml/convert_mat_to_xml.m) for more details.
 - Images: This folder contains all your training images
-- ImageSets: This folder originally only contains one file--trian.txt, which contains all the names of the images. It looks like this:
+- ImageSets: This folder originally only contains one file--train.txt, which contains all the names of the training images (without extension, e.g. `.jpg`). It looks like this:
 ```
 w_8762
 w_3935
@@ -52,7 +52,7 @@ while I add another file--test.txt having the same format as train.txt to store 
 There're a couple of files you have to modify.
 
 ### kaggle.py
-We have to create a file `kaggle.py` in the directory `$FRCNN_ROOT/lib/datasets`, where `$FRCNN_ROOT` is your path to fast-rcnn directory, e.g. `/home/coldmanck/fast-rcnn`. This file defines some functions which tell fast rcnn how to read ground truth boxes and how to find images on disk. Following the example file [inria.py](https://github.com/EdisonResearch/fast-rcnn/blob/master/lib/datasets/inria.py) created by [zeyuanxy's instruction](https://github.com/zeyuanxy/fast-rcnn/tree/master/help/train) , I mainly modified some functions below. You may want to read below along with my [kaggle.py](https://github.com/coldmanck/fast-rcnn/blob/master/lib/datasets/kaggle.py).
+The file `kaggle.py` in the directory `$FRCNN_ROOT/lib/datasets` (`$FRCNN_ROOT` is your path to fast-rcnn directory, e.g. `/home/coldmanck/fast-rcnn`) defines some functions which tell fast rcnn how to read ground truth boxes and how to find images on disk. Following the example file [inria.py](https://github.com/EdisonResearch/fast-rcnn/blob/master/lib/datasets/inria.py) created by [zeyuanxy's instruction](https://github.com/zeyuanxy/fast-rcnn/tree/master/help/train) , I mainly modified some functions below. You may want to read below along with my [kaggle.py](https://github.com/coldmanck/fast-rcnn/blob/master/lib/datasets/kaggle.py).
 
 **In function `__init__(self, image_set, devkit_path)`**
 
